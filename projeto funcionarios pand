@@ -1,0 +1,569 @@
+
+
+'''
+Você recebeu uma base de dados com informações de funcionários.
+Sua tarefa é responder às seguintes perguntas utilizando a biblioteca pandas:
+
+01 - Quantos registros existem na base de dados?
+02 - Quantos registros têm informações completas (sem valores ausentes)?
+03 - Substitua os valores ausentes na coluna "Salário" pela média dos salários
+      e exiba a nova média.
+04 - Substitua todos os valores "TI" na coluna "Departamento" por
+     "Tecnologia da Informação".
+05 - Qual é o salário mais alto e quem o recebe?
+06 - Quantos funcionários estão no departamento de Marketing?
+07 - Qual é a idade média dos funcionários por departamento?
+08 - Liste os cargos únicos presentes na base.
+09 - Crie uma nova coluna chamada "Tempo na Empresa" que calcula o tempo de
+     trabalho com base na data de contratação.
+10 - Liste os 5 funcionários com mais tempo de empresa.
+11 - Quantos funcionários têm desempenho avaliado acima de 8?
+12 - Qual é o salário total por departamento?
+13 - Liste os 5 funcionários mais jovens.
+14 - Existe algum registro sem salário? Liste-os.
+15 - Utilize a função apply para criar uma nova coluna "Categoria de Salário",
+     classificando os funcionários como "Baixo" (salário < 3000), "Médio"
+     (3000 ≤ salário ≤ 7000) e "Alto" (salário > 7000).
+16 - Utilize a função map para criar uma nova coluna chamada
+     "Desempenho Simplificado", substituindo a "Avaliação de Desempenho" em
+     uma escala simples: "Baixo" (1-3), "Médio" (4-7) e "Alto" (8-10).
+17 - Utilize uma função lambda para criar uma nova coluna "Idade em 5 Anos",
+     que adiciona 5 anos à idade atual dos funcionários.
+18 - Quantos funcionários estão na categoria de salário "Alto"?
+19 - Use dropna para excluir registros com valores ausentes e salve o
+     DataFrame limpo em um novo arquivo CSV.
+20 - Faça o casting da coluna "Avaliação de Desempenho" para o tipo inteiro e
+     exiba o DataFrame.
+'''
+     
+'\nVocê recebeu uma base de dados com informações de funcionários.\nSua tarefa é responder às seguintes perguntas utilizando a biblioteca pandas:\n\n01 - Quantos registros existem na base de dados?\n02 - Quantos registros têm informações completas (sem valores ausentes)?\n03 - Substitua os valores ausentes na coluna "Salário" pela média dos salários\n      e exiba a nova média.\n04 - Substitua todos os valores "TI" na coluna "Departamento" por\n     "Tecnologia da Informação".\n05 - Qual é o salário mais alto e quem o recebe?\n06 - Quantos funcionários estão no departamento de Marketing?\n07 - Qual é a idade média dos funcionários por departamento?\n08 - Liste os cargos únicos presentes na base.\n09 - Crie uma nova coluna chamada "Tempo na Empresa" que calcula o tempo de\n     trabalho com base na data de contratação.\n10 - Liste os 5 funcionários com mais tempo de empresa.\n11 - Quantos funcionários têm desempenho avaliado acima de 8?\n12 - Qual é o salário total por departamento?\n13 - Liste os 5 funcionários mais jovens.\n14 - Existe algum registro sem salário? Liste-os.\n15 - Utilize a função apply para criar uma nova coluna "Categoria de Salário",\n     classificando os funcionários como "Baixo" (salário < 3000), "Médio"\n     (3000 ≤ salário ≤ 7000) e "Alto" (salário > 7000).\n16 - Utilize a função map para criar uma nova coluna chamada\n     "Desempenho Simplificado", substituindo a "Avaliação de Desempenho" em\n     uma escala simples: "Baixo" (1-3), "Médio" (4-7) e "Alto" (8-10).\n17 - Utilize uma função lambda para criar uma nova coluna "Idade em 5 Anos",\n     que adiciona 5 anos à idade atual dos funcionários.\n18 - Quantos funcionários estão na categoria de salário "Alto"?\n19 - Use dropna para excluir registros com valores ausentes e salve o\n     DataFrame limpo em um novo arquivo CSV.\n20 - Faça o casting da coluna "Avaliação de Desempenho" para o tipo inteiro e\n     exiba o DataFrame.\n'
+
+import pandas as pd
+     
+
+df = pd.read_csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vSpCW9yMoUMQ4tknj5Lg_TYVfIC3P9KoVPPqlJKsBu2HzGaC579yCp9Ohxni2ncY-xyLfugXan9K6yf/pub?gid=636707205&single=true&output=csv')
+display(df)
+     
+ID	Nome	Idade	Salário	Cargo	Departamento	Data de Contratação	Avaliação de Desempenho
+0	1	Juan	42.0	9276.79	Florista	Financeiro	2024-03-01	3.6
+1	2	Isabelly	65.0	NaN	NaN	Operações	2023-04-04	6.3
+2	3	Cauê	35.0	3692.61	Lutador de jiu-jitsu	NaN	2022-07-28	5.7
+3	4	Theo	34.0	2092.81	DJ	Operações	NaN	1.5
+4	5	Pedro Miguel	47.0	5944.17	Neurocirurgião	RH	2024-06-06	6.2
+5	6	Emilly	19.0	3272.55	Ginecologista	RH	2020-05-28	3.8
+6	7	Valentina	62.0	5974.31	Bedel	Financeiro	2022-01-20	9.2
+7	8	Laís	30.0	4802.08	Lubrificador de máquinas	Operações	2024-05-25	3.2
+8	9	Beatriz	23.0	8775.87	Jogador de futebol	Marketing	2022-11-07	9.9
+9	10	Olivia	52.0	5483.96	Piloto de avião	NaN	2023-02-16	3.0
+10	11	NaN	58.0	NaN	Cameraman	Operações	2020-10-04	6.1
+11	12	Daniela	63.0	9867.30	Odontologista estético	Operações	NaN	3.7
+12	13	Pedro Miguel	23.0	2341.04	Moldureiro	RH	2022-11-29	1.4
+13	14	Matheus	35.0	3789.40	Dublador	TI	2022-11-24	7.6
+14	15	NaN	23.0	3381.05	Bioquímico	RH	2024-07-25	5.7
+15	16	Sabrina	51.0	2843.48	NaN	Financeiro	2023-01-28	8.7
+16	17	Marcela	NaN	6154.51	Traumatologista	TI	2023-06-13	6.6
+17	18	Marina	48.0	7286.35	NaN	Marketing	2021-08-18	1.3
+18	19	Luigi	56.0	8527.65	Instrumentista musical	RH	NaN	3.6
+19	20	Ana Sophia	33.0	6487.00	Cartunista	Financeiro	2024-01-03	6.5
+20	21	Isaac	NaN	5063.65	Tecnólogo em automação industrial	Financeiro	2020-06-15	5.7
+21	22	Ana Sophia	41.0	6886.18	Balconista	RH	2020-06-30	2.5
+22	23	Nicolas	30.0	7663.33	Cantor	TI	2023-01-31	3.7
+23	24	João	NaN	9911.71	Cozinheira	Marketing	2021-12-24	3.4
+24	25	Stella	55.0	7602.38	Tecnólogo em rochas ornamentais	RH	2024-08-29	2.9
+25	26	Rodrigo	56.0	NaN	Taxista	Marketing	2023-04-27	8.9
+26	27	Bruna	43.0	9833.68	Moleiro	RH	2021-05-03	9.3
+27	28	Luiz Henrique	41.0	NaN	Protético dentário	Marketing	2023-06-01	1.9
+28	29	Luigi	63.0	2487.61	Pianista	Marketing	2021-08-22	8.3
+29	30	Alice	61.0	5948.40	Cinegrafista	RH	2020-06-11	1.6
+30	31	NaN	45.0	8609.80	Intérprete de Bíblias	Marketing	2023-06-08	9.4
+31	32	Beatriz	57.0	6126.69	Carnavalesco	TI	2022-02-03	4.6
+32	33	NaN	36.0	5801.45	Geógrafo	TI	2021-05-17	4.4
+33	34	Sabrina	59.0	6427.74	Empacotador	Financeiro	2020-05-30	8.9
+34	35	Bruna	33.0	2963.38	Ator	Marketing	2023-07-30	5.2
+35	36	Amanda	25.0	9479.60	Imunologista	RH	2023-08-26	8.2
+36	37	Igor	63.0	3786.16	Quiropraxista	TI	2024-07-04	9.3
+37	38	Marcos Vinicius	21.0	4897.86	Ferroviário	RH	2021-03-08	6.7
+38	39	Francisco	50.0	5489.69	Publicitário	RH	NaN	7.2
+39	40	Felipe	38.0	6453.13	Segurança particular	Financeiro	NaN	6.9
+40	41	Camila	32.0	5471.34	Ferroviário	Marketing	2021-10-23	3.9
+41	42	Maria Vitória	38.0	3758.97	Comerciante	RH	2023-03-21	2.1
+42	43	Luigi	32.0	NaN	Artista de circo	TI	2021-09-23	10.0
+43	44	Marcela	28.0	9325.74	Capitão	Operações	2022-11-06	3.1
+44	45	Ana Clara	33.0	9647.46	Jogador de handebol	Marketing	2023-04-12	3.0
+45	46	Diogo	23.0	1868.90	Figurante	Operações	2021-07-26	6.3
+46	47	Maria Sophia	29.0	5093.68	Telegrafista	Operações	2023-07-11	9.3
+47	48	Rafaela	60.0	7884.49	Judoca	Operações	2024-05-21	7.4
+48	49	Fernanda	61.0	2983.61	Ortoptista	TI	2020-03-30	3.7
+49	50	NaN	57.0	2507.07	Garçom	RH	2021-05-11	2.7
+
+''''01 - Quantos registros existem na base de dados?'''
+df.shape
+     
+(50, 8)
+
+'''02 - Quantos registros têm informações completas (sem valores ausentes)?'''
+df.info()
+len(df.dropna())
+
+     
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 50 entries, 0 to 49
+Data columns (total 8 columns):
+ #   Column                   Non-Null Count  Dtype  
+---  ------                   --------------  -----  
+ 0   ID                       50 non-null     int64  
+ 1   Nome                     45 non-null     object 
+ 2   Idade                    47 non-null     float64
+ 3   Salário                  45 non-null     float64
+ 4   Cargo                    47 non-null     object 
+ 5   Departamento             48 non-null     object 
+ 6   Data de Contratação      45 non-null     object 
+ 7   Avaliação de Desempenho  50 non-null     float64
+dtypes: float64(3), int64(1), object(4)
+memory usage: 3.2+ KB
+29
+
+'''03 - Substitua os valores ausentes na coluna "Salário" pela média dos salários e exiba a nova média.'''
+
+salario_medio = df['Salário'].mean()
+df['Salário'].fillna(df['Salário'].mean(),inplace=True)
+novo_salario = df['Salário'].mean()
+print(salario_medio)
+print(novo_salario)
+
+
+     
+5865.925111111112
+5865.925111111112
+<ipython-input-76-6e922ac06b53>:4: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  df['Salário'].fillna(df['Salário'].mean(),inplace=True)
+
+'''04 - Substitua todos os valores "TI" na coluna "Departamento" por "Tecnologia da Informação".'''
+df['Tecnologia da Informação'] = df['Departamento'].replace({'TI':'Tecnologia da Informação'})
+df['Tecnologia da Informação']
+     
+Tecnologia da Informação
+0	Financeiro
+1	Operações
+2	NaN
+3	Operações
+4	RH
+5	RH
+6	Financeiro
+7	Operações
+8	Marketing
+9	NaN
+10	Operações
+11	Operações
+12	RH
+13	Tecnologia da Informação
+14	RH
+15	Financeiro
+16	Tecnologia da Informação
+17	Marketing
+18	RH
+19	Financeiro
+20	Financeiro
+21	RH
+22	Tecnologia da Informação
+23	Marketing
+24	RH
+25	Marketing
+26	RH
+27	Marketing
+28	Marketing
+29	RH
+30	Marketing
+31	Tecnologia da Informação
+32	Tecnologia da Informação
+33	Financeiro
+34	Marketing
+35	RH
+36	Tecnologia da Informação
+37	RH
+38	RH
+39	Financeiro
+40	Marketing
+41	RH
+42	Tecnologia da Informação
+43	Operações
+44	Marketing
+45	Operações
+46	Operações
+47	Operações
+48	Tecnologia da Informação
+49	RH
+
+dtype: object
+
+'''05 - Qual é o salário mais alto e quem o recebe?'''
+df['salario_alto'] = df['Salário'].max()
+nome_sal= df.query('Salário == salario_alto')[['Nome','Salário','Cargo']]
+display(nome_sal)
+     
+Nome	Salário	Cargo
+23	João	9911.71	Cozinheira
+
+'''06 - Quantos funcionários estão no departamento de Marketing?'''
+
+quantidade = df.query('Departamento == "Marketing"').shape[0]
+print(f'A quantidade de funcionários no departamento de Marketing é de:{quantidade}')
+     
+A quantidade de funcionários no departamento de Marketing é de:10
+
+'''07 - Qual é a idade média dos funcionários por departamento?'''
+idade_media = df[['Idade','Departamento']].groupby('Departamento').mean()
+display(round(idade_media),1)
+     
+Idade
+Departamento	
+Financeiro	48.0
+Marketing	42.0
+Operações	43.0
+RH	40.0
+TI	45.0
+1
+
+'''08 - Liste os cargos únicos presentes na base.'''
+cargos_unicos = df['Cargo'].unique()
+display(cargos_unicos)
+     
+array(['Florista', nan, 'Lutador de jiu-jitsu', 'DJ', 'Neurocirurgião',
+       'Ginecologista', 'Bedel', 'Lubrificador de máquinas',
+       'Jogador de futebol', 'Piloto de avião', 'Cameraman',
+       'Odontologista estético', 'Moldureiro', 'Dublador', 'Bioquímico',
+       'Traumatologista', 'Instrumentista musical', 'Cartunista',
+       'Tecnólogo em automação industrial', 'Balconista', 'Cantor',
+       'Cozinheira', 'Tecnólogo em rochas ornamentais', 'Taxista',
+       'Moleiro', 'Protético dentário', 'Pianista', 'Cinegrafista',
+       'Intérprete de Bíblias', 'Carnavalesco', 'Geógrafo', 'Empacotador',
+       'Ator', 'Imunologista', 'Quiropraxista', 'Ferroviário',
+       'Publicitário', 'Segurança particular', 'Comerciante',
+       'Artista de circo', 'Capitão', 'Jogador de handebol', 'Figurante',
+       'Telegrafista', 'Judoca', 'Ortoptista', 'Garçom'], dtype=object)
+
+'''
+09 - Crie uma nova coluna chamada "Tempo na Empresa" que calcula o tempo de
+     trabalho com base na data de contratação.
+'''
+df['Data de Contratação'] = pd.to_datetime(df['Data de Contratação'], errors='coerce')
+df['Anos Trabalhados'] = df['Data de Contratação'].apply(lambda x: (pd.Timestamp.now()- x).days/365 if pd.notnull(x) else None)
+df[['Nome','Anos Trabalhados']]
+     
+Nome	Anos Trabalhados
+0	Juan	0.747945
+1	Isabelly	1.657534
+2	Cauê	2.342466
+3	Theo	NaN
+4	Pedro Miguel	0.482192
+5	Emilly	4.509589
+6	Valentina	2.860274
+7	Laís	0.515068
+8	Beatriz	2.063014
+9	Olivia	1.786301
+10	NaN	4.156164
+11	Daniela	NaN
+12	Pedro Miguel	2.002740
+13	Matheus	2.016438
+14	NaN	0.347945
+15	Sabrina	1.838356
+16	Marcela	1.465753
+17	Marina	3.284932
+18	Luigi	NaN
+19	Ana Sophia	0.906849
+20	Isaac	4.460274
+21	Ana Sophia	4.419178
+22	Nicolas	1.830137
+23	João	2.934247
+24	Stella	0.252055
+25	Rodrigo	1.594521
+26	Bruna	3.578082
+27	Luiz Henrique	1.498630
+28	Luigi	3.273973
+29	Alice	4.471233
+30	NaN	1.479452
+31	Beatriz	2.821918
+32	NaN	3.539726
+33	Sabrina	4.504110
+34	Bruna	1.336986
+35	Amanda	1.263014
+36	Igor	0.405479
+37	Marcos Vinicius	3.731507
+38	Francisco	NaN
+39	Felipe	NaN
+40	Camila	3.104110
+41	Maria Vitória	1.695890
+42	Luigi	3.186301
+43	Marcela	2.065753
+44	Ana Clara	1.635616
+45	Diogo	3.347945
+46	Maria Sophia	1.389041
+47	Rafaela	0.526027
+48	Fernanda	4.671233
+49	NaN	3.556164
+
+'''
+10 - Liste os 5 funcionários com mais tempo de empresa.
+'''
+
+
+top_5_funcionarios = df.sort_values(by='Anos Trabalhados', ascending=False).head(5)
+display(top_5_funcionarios[['Nome', 'Departamento', 'Anos Trabalhados']])
+
+     
+Nome	Departamento	Anos Trabalhados
+48	Fernanda	TI	4.671233
+5	Emilly	RH	4.509589
+33	Sabrina	Financeiro	4.504110
+29	Alice	RH	4.471233
+20	Isaac	Financeiro	4.460274
+
+'''
+11 - Quantos funcionários têm desempenho avaliado acima de 8?
+'''
+quantidade = df[df['Avaliação de Desempenho'] > 8].shape[0]
+display(quantidade)
+     
+12
+
+'''
+12 - Qual é o salário total por departamento?
+'''
+salario_total = df.groupby('Departamento')['Salário'].sum().reset_index()
+display(round(salario_total),2)
+     
+Departamento	Salário
+0	Financeiro	42526.0
+1	Marketing	66885.0
+2	Operações	52667.0
+3	RH	79870.0
+4	TI	42171.0
+2
+
+'''
+13 - Liste os 5 funcionários mais jovens.
+'''
+top_5_jovens = df.sort_values(by='Idade', ascending=True).head(5)
+display(top_5_jovens)
+     
+ID	Nome	Idade	Salário	Cargo	Departamento	Data de Contratação	Avaliação de Desempenho	Nova_media	Tecnologia da Informação	salario_alto	Anos Trabalhados
+5	6	Emilly	19.0	3272.55	Ginecologista	RH	2020-05-28	3.8	None	RH	9911.71	4.509589
+37	38	Marcos Vinicius	21.0	4897.86	Ferroviário	RH	2021-03-08	6.7	None	RH	9911.71	3.731507
+12	13	Pedro Miguel	23.0	2341.04	Moldureiro	RH	2022-11-29	1.4	None	RH	9911.71	2.002740
+14	15	NaN	23.0	3381.05	Bioquímico	RH	2024-07-25	5.7	None	RH	9911.71	0.347945
+8	9	Beatriz	23.0	8775.87	Jogador de futebol	Marketing	2022-11-07	9.9	None	Marketing	9911.71	2.063014
+
+'''14 - Existe algum registro sem salário? Liste-os.'''
+
+sem_registro = df[df['Salário'].isna()]
+display(sem_registro)
+     
+ID	Nome	Idade	Salário	Cargo	Departamento	Data de Contratação	Avaliação de Desempenho	Nova_media	Tecnologia da Informação	salario_alto	Anos Trabalhados	Categoria de Salário	Desempenho Simplificado	idade_5mais
+
+'''
+
+15 - Utilize a função apply para criar uma nova coluna "Categoria de Salário",
+     classificando os funcionários como "Baixo" (salário < 3000), "Médio"
+     (3000 ≤ salário ≤ 7000) e "Alto" (salário > 7000).'''
+
+df['Categoria de Salário'] = df['Salário'].apply(lambda x: 'Baixo' if x < 3000 else 'Médio' if x <= 7000 else 'Alto')
+display(df[['Nome', 'Salário', 'Categoria de Salário']])
+     
+Nome	Salário	Categoria de Salário
+0	Juan	9276.790000	Alto
+1	Isabelly	5865.925111	Médio
+2	Cauê	3692.610000	Médio
+3	Theo	2092.810000	Baixo
+4	Pedro Miguel	5944.170000	Médio
+5	Emilly	3272.550000	Médio
+6	Valentina	5974.310000	Médio
+7	Laís	4802.080000	Médio
+8	Beatriz	8775.870000	Alto
+9	Olivia	5483.960000	Médio
+10	NaN	5865.925111	Médio
+11	Daniela	9867.300000	Alto
+12	Pedro Miguel	2341.040000	Baixo
+13	Matheus	3789.400000	Médio
+14	NaN	3381.050000	Médio
+15	Sabrina	2843.480000	Baixo
+16	Marcela	6154.510000	Médio
+17	Marina	7286.350000	Alto
+18	Luigi	8527.650000	Alto
+19	Ana Sophia	6487.000000	Médio
+20	Isaac	5063.650000	Médio
+21	Ana Sophia	6886.180000	Médio
+22	Nicolas	7663.330000	Alto
+23	João	9911.710000	Alto
+24	Stella	7602.380000	Alto
+25	Rodrigo	5865.925111	Médio
+26	Bruna	9833.680000	Alto
+27	Luiz Henrique	5865.925111	Médio
+28	Luigi	2487.610000	Baixo
+29	Alice	5948.400000	Médio
+30	NaN	8609.800000	Alto
+31	Beatriz	6126.690000	Médio
+32	NaN	5801.450000	Médio
+33	Sabrina	6427.740000	Médio
+34	Bruna	2963.380000	Baixo
+35	Amanda	9479.600000	Alto
+36	Igor	3786.160000	Médio
+37	Marcos Vinicius	4897.860000	Médio
+38	Francisco	5489.690000	Médio
+39	Felipe	6453.130000	Médio
+40	Camila	5471.340000	Médio
+41	Maria Vitória	3758.970000	Médio
+42	Luigi	5865.925111	Médio
+43	Marcela	9325.740000	Alto
+44	Ana Clara	9647.460000	Alto
+45	Diogo	1868.900000	Baixo
+46	Maria Sophia	5093.680000	Médio
+47	Rafaela	7884.490000	Alto
+48	Fernanda	2983.610000	Baixo
+49	NaN	2507.070000	Baixo
+
+'''
+16 - Utilize a função map para criar uma nova coluna chamada
+     "Desempenho Simplificado", substituindo a "Avaliação de Desempenho" em
+     uma escala simples: "Baixo" (1-3), "Médio" (4-7) e "Alto" (8-10).
+'''
+
+df['Desempenho Simplificado'] = df['Avaliação de Desempenho'].map(lambda x: 'Baixo' if x <= 3 else 'Médio' if x <= 7 else 'Alto' if pd.notnull(x) else 'Desconhecido')
+display(df[['Nome', 'Desempenho Simplificado']])
+     
+Nome	Desempenho Simplificado
+0	Juan	Médio
+1	Isabelly	Médio
+2	Cauê	Médio
+3	Theo	Baixo
+4	Pedro Miguel	Médio
+5	Emilly	Médio
+6	Valentina	Alto
+7	Laís	Médio
+8	Beatriz	Alto
+9	Olivia	Baixo
+10	NaN	Médio
+11	Daniela	Médio
+12	Pedro Miguel	Baixo
+13	Matheus	Alto
+14	NaN	Médio
+15	Sabrina	Alto
+16	Marcela	Médio
+17	Marina	Baixo
+18	Luigi	Médio
+19	Ana Sophia	Médio
+20	Isaac	Médio
+21	Ana Sophia	Baixo
+22	Nicolas	Médio
+23	João	Médio
+24	Stella	Baixo
+25	Rodrigo	Alto
+26	Bruna	Alto
+27	Luiz Henrique	Baixo
+28	Luigi	Alto
+29	Alice	Baixo
+30	NaN	Alto
+31	Beatriz	Médio
+32	NaN	Médio
+33	Sabrina	Alto
+34	Bruna	Médio
+35	Amanda	Alto
+36	Igor	Alto
+37	Marcos Vinicius	Médio
+38	Francisco	Alto
+39	Felipe	Médio
+40	Camila	Médio
+41	Maria Vitória	Baixo
+42	Luigi	Alto
+43	Marcela	Médio
+44	Ana Clara	Baixo
+45	Diogo	Médio
+46	Maria Sophia	Alto
+47	Rafaela	Alto
+48	Fernanda	Médio
+49	NaN	Baixo
+
+'''17 - Utilize uma função lambda para criar uma nova coluna "Idade em 5 Anos",
+     que adiciona 5 anos à idade atual dos funcionários.'''
+
+df['idade_5mais'] = df['Idade'].map(lambda x: x+5)
+display(df[['Nome','Idade','idade_5mais']])
+     
+Nome	Idade	idade_5mais
+0	Juan	42.0	47.0
+1	Isabelly	65.0	70.0
+2	Cauê	35.0	40.0
+3	Theo	34.0	39.0
+4	Pedro Miguel	47.0	52.0
+5	Emilly	19.0	24.0
+6	Valentina	62.0	67.0
+7	Laís	30.0	35.0
+8	Beatriz	23.0	28.0
+9	Olivia	52.0	57.0
+10	NaN	58.0	63.0
+11	Daniela	63.0	68.0
+12	Pedro Miguel	23.0	28.0
+13	Matheus	35.0	40.0
+14	NaN	23.0	28.0
+15	Sabrina	51.0	56.0
+16	Marcela	NaN	NaN
+17	Marina	48.0	53.0
+18	Luigi	56.0	61.0
+19	Ana Sophia	33.0	38.0
+20	Isaac	NaN	NaN
+21	Ana Sophia	41.0	46.0
+22	Nicolas	30.0	35.0
+23	João	NaN	NaN
+24	Stella	55.0	60.0
+25	Rodrigo	56.0	61.0
+26	Bruna	43.0	48.0
+27	Luiz Henrique	41.0	46.0
+28	Luigi	63.0	68.0
+29	Alice	61.0	66.0
+30	NaN	45.0	50.0
+31	Beatriz	57.0	62.0
+32	NaN	36.0	41.0
+33	Sabrina	59.0	64.0
+34	Bruna	33.0	38.0
+35	Amanda	25.0	30.0
+36	Igor	63.0	68.0
+37	Marcos Vinicius	21.0	26.0
+38	Francisco	50.0	55.0
+39	Felipe	38.0	43.0
+40	Camila	32.0	37.0
+41	Maria Vitória	38.0	43.0
+42	Luigi	32.0	37.0
+43	Marcela	28.0	33.0
+44	Ana Clara	33.0	38.0
+45	Diogo	23.0	28.0
+46	Maria Sophia	29.0	34.0
+47	Rafaela	60.0	65.0
+48	Fernanda	61.0	66.0
+49	NaN	57.0	62.0
+
+'''18 - Quantos funcionários estão na categoria de salário "Alto"?'''
+
+altos_salarios = len(df[df['Categoria de Salário'] == 'Alto'])
+print(f"Existem {altos_salarios} funcionários na categoria de salário 'Alto'.")
+     
+Existem 14 funcionários na categoria de salário 'Alto'.
+
+'''19 - Use dropna para excluir registros com valores ausentes e salve o
+DataFrame limpo em um novo arquivo CSV.'''
+df_limpo = df.dropna()
+df_limpo.to_csv('df_limpo.csv', index=False)
+display(df_limpo)
+     
+ID	Nome	Idade	Salário	Cargo	Departamento	Data de Contratação	Avaliação de Desempenho	Nova_media	Tecnologia da Informação	salario_alto	Anos Trabalhados	Categoria de Salário	Desempenho Simplificado	idade_5mais
+
+'''20 - Faça o casting da coluna "Avaliação de Desempenho" para o tipo inteiro e
+exiba o DataFrame.'''
+
+df['Avaliação de Desempenho'] = df['Avaliação de Desempenho'].astype(int)
+display(df['Avaliação de Desempenho'].dtype)
+     
+dtype('int64')
